@@ -1,0 +1,126 @@
+[gd_scene load_steps=16 format=3 uid="uid://dbggk6qqmellv"]
+
+[ext_resource type="Script" path="res://Scenes/Characters/Dude/dude_movement.gd" id="1_64p1w"]
+[ext_resource type="Texture2D" uid="uid://dj48neeq3kfk4" path="res://Textures/person.jpg" id="2_qs6b5"]
+[ext_resource type="Script" path="res://Scenes/Characters/Dude/Weapons/weapon_selector.gd" id="3_afiro"]
+[ext_resource type="Script" path="res://Scenes/Characters/Dude/Weapons/Bat/bat_weapon.gd" id="4_bxeu8"]
+[ext_resource type="Texture2D" uid="uid://c1rdig5hje2r0" path="res://Textures/wood.jpg" id="5_ek7e5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0hyfn"]
+friction = 0.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jywem"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sbd2e"]
+albedo_texture = ExtResource("2_qs6b5")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hm5gj"]
+material = SubResource("StandardMaterial3D_sbd2e")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_17pp7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_no0va"]
+albedo_texture = ExtResource("5_ek7e5")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1gh6e"]
+material = SubResource("StandardMaterial3D_no0va")
+radius = 0.05
+height = 1.0
+
+[sub_resource type="Animation" id="Animation_ftkfm"]
+resource_name = "swing"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-1.0472, 0, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hki4y"]
+_data = {
+"swing": SubResource("Animation_ftkfm")
+}
+
+[sub_resource type="BoxMesh" id="BoxMesh_blh7l"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Dude" type="RigidBody3D"]
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+mass = 60.0
+physics_material_override = SubResource("PhysicsMaterial_0hyfn")
+gravity_scale = 0.0
+script = ExtResource("1_64p1w")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_jywem")
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_hm5gj")
+skeleton = NodePath("../..")
+
+[node name="Pivot" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Body/Pivot"]
+
+[node name="TextureRect" type="TextureRect" parent="Body/Pivot/Camera3D"]
+offset_left = 608.0
+offset_top = 328.0
+offset_right = 672.0
+offset_bottom = 392.0
+texture = SubResource("CompressedTexture2D_17pp7")
+
+[node name="Weapons" type="Node3D" parent="Body/Pivot"]
+script = ExtResource("3_afiro")
+
+[node name="Bat" type="Node3D" parent="Body/Pivot/Weapons"]
+script = ExtResource("4_bxeu8")
+
+[node name="HitRay" type="RayCast3D" parent="Body/Pivot/Weapons/Bat"]
+target_position = Vector3(0, 0, -3)
+
+[node name="BatPivot" type="Node3D" parent="Body/Pivot/Weapons/Bat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.4, -0.2)
+
+[node name="BatShape" type="MeshInstance3D" parent="Body/Pivot/Weapons/Bat/BatPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.906308, 0.422618, 0, -0.422618, 0.906308, 0, 0.2, -0.2)
+mesh = SubResource("CapsuleMesh_1gh6e")
+skeleton = NodePath("../../../..")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Body/Pivot/Weapons/Bat/BatPivot"]
+libraries = {
+"": SubResource("AnimationLibrary_hki4y")
+}
+
+[node name="FlashLight" type="Node3D" parent="Body/Pivot/Weapons"]
+
+[node name="FlashPivot" type="Node3D" parent="Body/Pivot/Weapons/FlashLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.3, -0.6)
+
+[node name="SelectorShape" type="MeshInstance3D" parent="Body/Pivot/Weapons/FlashLight/FlashPivot"]
+mesh = SubResource("BoxMesh_blh7l")
+skeleton = NodePath("../../../..")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Body/Pivot/Weapons/FlashLight/FlashPivot"]
+
+[node name="Collsion" type="Node3D" parent="Body"]
+
+[node name="BigFeet" type="RayCast3D" parent="Body/Collsion"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
+target_position = Vector3(0, -0.7, 0)
+
+[node name="SmallFeet" type="RayCast3D" parent="Body/Collsion"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
+target_position = Vector3(0, -0.3, 0)
