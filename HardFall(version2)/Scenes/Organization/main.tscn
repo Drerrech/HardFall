@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://b5on1d4na1qks"]
+
+[ext_resource type="PackedScene" uid="uid://bfp16fjrfxo74" path="res://Scenes/Static/Level/level.tscn" id="1_f5cd0"]
+[ext_resource type="PackedScene" uid="uid://dbggk6qqmellv" path="res://Scenes/Characters/Dude/dude.tscn" id="2_vrwff"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qdoqx"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_twd78"]
+sky_material = SubResource("ProceduralSkyMaterial_qdoqx")
+
+[sub_resource type="Environment" id="Environment_n1bmd"]
+background_mode = 2
+sky = SubResource("Sky_twd78")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_rliuo"]
+size = Vector3(1, 0.1, 1)
+
+[node name="Main" type="Node"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_n1bmd")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.5, -3.47605e-08, -0.394349, 0.683032, 0.614781, -0.30739, 0.532416, -0.788698, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Dude" parent="." instance=ExtResource("2_vrwff")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.3456, 78.941, 15.7213)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2994, 53.3713, 47.9974)
+light_energy = 4.111
+omni_range = 1280.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.1699, 53.1566, 48.764)
+mesh = SubResource("BoxMesh_rliuo")
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48.4342, 46.5494, 16.6437)
+light_energy = 3.778
+omni_range = 4096.0
+
+[node name="Level" parent="." instance=ExtResource("1_f5cd0")]
